@@ -62,10 +62,12 @@ void Error_Handler(void);
 #define LED_STATUS_GPIO_Port GPIOA
 #define BAT_LEVEL_Pin GPIO_PIN_1
 #define BAT_LEVEL_GPIO_Port GPIOA
-#define NRF_CE_Pin GPIO_PIN_2
-#define NRF_CE_GPIO_Port GPIOA
-#define NRF_PWR_Pin GPIO_PIN_0
-#define NRF_PWR_GPIO_Port GPIOB
+#define NRF_IRQ_Pin GPIO_PIN_2
+#define NRF_IRQ_GPIO_Port GPIOA
+#define NRF_CSN_Pin GPIO_PIN_0
+#define NRF_CSN_GPIO_Port GPIOB
+#define NRF_CE_Pin GPIO_PIN_1
+#define NRF_CE_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
