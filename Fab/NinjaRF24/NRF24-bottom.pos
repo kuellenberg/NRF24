@@ -1,0 +1,7 @@
+### Module positions - created on 10/02/20 19:55:23 ###
+### Printed by Pcbnew version kicad 5.1.6
+## Unit = mm, Angle = deg.
+## Side : bottom
+# Ref     Val       Package                                  PosX       PosY       Rot  Side
+BT1       CR2032    BatteryHolder_Keystone_1060_1x2032  -180.8000   -87.1500   90.0000  bottom
+## End
