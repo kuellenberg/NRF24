@@ -267,17 +267,17 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, LED_STATUS_Pin|NRF_PWR_Pin|BAT_CHECK_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, NRF_CSN_Pin|NRF_CE_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : LED_STATUS_Pin */
-  GPIO_InitStruct.Pin = LED_STATUS_Pin;
+  /*Configure GPIO pins : LED_STATUS_Pin NRF_PWR_Pin BAT_CHECK_Pin */
+  GPIO_InitStruct.Pin = LED_STATUS_Pin|NRF_PWR_Pin|BAT_CHECK_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LED_STATUS_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pin : NRF_IRQ_Pin */
   GPIO_InitStruct.Pin = NRF_IRQ_Pin;

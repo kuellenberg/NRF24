@@ -68,6 +68,10 @@ void Error_Handler(void);
 #define NRF_CSN_GPIO_Port GPIOB
 #define NRF_CE_Pin GPIO_PIN_1
 #define NRF_CE_GPIO_Port GPIOB
+#define NRF_PWR_Pin GPIO_PIN_8
+#define NRF_PWR_GPIO_Port GPIOA
+#define BAT_CHECK_Pin GPIO_PIN_15
+#define BAT_CHECK_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
