@@ -21,6 +21,7 @@ F 0 "BT1" H 1018 1396 50  0000 L CNN
 F 1 "CR2032" H 1018 1305 50  0000 L CNN
 F 2 "Battery:BatteryHolder_Keystone_1060_1x2032" V 900 1360 50  0001 C CNN
 F 3 "~" V 900 1360 50  0001 C CNN
+F 4 "534-1060TR" H 900 1300 50  0001 C CNN "Mouser"
 	1    900  1300
 	1    0    0    -1  
 $EndComp
@@ -44,6 +45,7 @@ F 0 "J1" H 1600 5650 50  0000 R CNN
 F 1 "Conn_ARM_JTAG_SWD_10" H 2400 4500 50  0000 R CNN
 F 2 "Connector_PinHeader_1.27mm:PinHeader_2x05_P1.27mm_Vertical_SMD" H 1400 5100 50  0001 C CNN
 F 3 "http://infocenter.arm.com/help/topic/com.arm.doc.ddi0314h/DDI0314H_coresight_components_trm.pdf" V 1050 3850 50  0001 C CNN
+F 4 "855-M50-3610542R" H 1400 5100 50  0001 C CNN "Mouser"
 	1    1400 5100
 	1    0    0    -1  
 $EndComp
@@ -414,6 +416,7 @@ F 0 "J2" H 10800 2075 50  0000 L CNN
 F 1 "SMA" H 10800 1984 50  0000 L CNN
 F 2 "ak:SMA_Samtec_SMA-J-P-H-ST-EM1_EdgeMount" H 10700 2100 50  0001 C CNN
 F 3 " ~" H 10700 2100 50  0001 C CNN
+F 4 "200-SMAJPHSTEM1" H 10700 2100 50  0001 C CNN "Mouser"
 	1    10700 2100
 	1    0    0    -1  
 $EndComp
