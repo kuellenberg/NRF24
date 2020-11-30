@@ -1,6 +1,5 @@
-Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_cortex.o: \
- ../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_cortex.c \
- ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal.h \
+Core/Src/nrf24.o: ../Core/Src/nrf24.c ../Core/Inc/nrf24.h \
+ ../Core/Inc/main.h ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal.h \
  ../Core/Inc/stm32l0xx_hal_conf.h \
  ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_rcc.h \
  ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_def.h \
@@ -27,6 +26,10 @@ Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_cortex.o: \
  ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_pwr.h \
  ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_pwr_ex.h \
  ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_spi.h
+
+../Core/Inc/nrf24.h:
+
+../Core/Inc/main.h:
 
 ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal.h:
 
