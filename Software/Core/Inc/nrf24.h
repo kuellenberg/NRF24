@@ -55,6 +55,7 @@
 #define nRF24_MASK_REG_MAP		0x1F	// Mask lower 5 bits for R_REGISTER and W_REGISTER
 #define nRF24_MASK_RF_PWR		0x06
 #define nRF24_MASK_DATARATE		0x28
+#define nRF24_MASK_CRC			0x0C
 
 #define nRF24_CONFIG_PRIM_RX	0x01
 #define nRF24_CONFIG_PWR_UP		0x02
@@ -62,6 +63,9 @@
 
 #define nRF24_CSN_LOW		HAL_GPIO_WritePin(NRF_CSN_GPIO_Port, NRF_CSN_Pin, GPIO_PIN_RESET)
 #define nRF24_CSN_HIGH		HAL_GPIO_WritePin(NRF_CSN_GPIO_Port, NRF_CSN_Pin, GPIO_PIN_SET)
+
+#define nRF24_CE_LOW		HAL_GPIO_WritePin(NRF_CE_GPIO_Port, NRF_CE_Pin, GPIO_PIN_RESET)
+#define nRF24_CE_HIGH		HAL_GPIO_WritePin(NRF_CE_GPIO_Port, NRF_CE_Pin, GPIO_PIN_SET)
 
 enum {
 	nRF24_ROLE_PRX		= 0x01,
@@ -86,21 +90,41 @@ enum {
 	nRF24_DR_250kbps	= 0x20
 };
 
-static uint8_t status_reg;
+enum {
+	nRF24_CRC_Disabled	= 0x00,
+	nRF24_CRC_8			= 0x08,
+	nRF24_CRC_16		= 0x0C
+};
+
+enum {
+	nRF24_PIPE0		= nRF24_REG_RX_ADDR_P0,
+	nRF24_PIPE1		= nRF24_REG_RX_ADDR_P1,
+	nRF24_PIPE2		= nRF24_REG_RX_ADDR_P2,
+	nRF24_PIPE3		= nRF24_REG_RX_ADDR_P3,
+	nRF24_PIPE4		= nRF24_REG_RX_ADDR_P4,
+	nRF24_PIPE5		= nRF24_REG_RX_ADDR_P5,
+	nRF24_PIPETX	= nRF24_REG_TX_ADDR
+};
+
+
 static SPI_HandleTypeDef *nrf24_hspi;
 
 void nRF24_Init(SPI_HandleTypeDef *hspi);
-uint8_t nRF24_SendByte(uint8_t value);
-void nRF24_WriteRegister(uint8_t reg, uint8_t value);
-void nRF24_WriteMBRegister(uint8_t reg, uint8_t *value, uint8_t len);
+uint8_t nRF24_Command(uint8_t cmd);
+void nRF24_WriteRegister(uint8_t reg, uint8_t data);
+void nRF24_WriteMBRegister(uint8_t reg, uint8_t *buf, uint8_t len);
 uint8_t nRF24_ReadRegister(uint8_t reg);
-void nRF24_ReadMBRegister(uint8_t reg, uint8_t *recv, uint8_t len);
+void nRF24_ReadMBRegister(uint8_t reg, uint8_t *buf, uint8_t len);
 uint8_t nRF24_GetStatus(void);
 void nRF24_SetRFChannel(uint8_t channel);
 void nRF24_SetRole(uint8_t role);
 void nRF24_SetPowerMode(uint8_t mode);
 void nRF24_SetRFPower(uint8_t power);
 void nRF24_SetDatarate(uint8_t datarate);
-
-
+uint8_t nRF24_GetAddrWidth(void);
+void nRF24_SetAddrWidth(uint8_t aw);
+void nRF24_SetAddr(uint8_t pipe, uint8_t *addr);
+void nRF24_FlushTX(void);
+void nRF24_FlushRX(void);
+void nRF24_DisableAA(uint8_t pipe);
 #endif /* NRF24_H_ */

@@ -73,8 +73,10 @@ static void MX_SPI1_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	uint8_t s;
-	uint8_t buffer[6] = {0,0,0,0,0,0};
+	uint8_t s,count,n;
+	uint8_t buffer[10] = {0,0,0,0,0,0,0,0,0,0};
+	uint8_t tx_addr[5] = {"1Node"};
+	uint8_t pipe0[5] = {"edoN1"};
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -102,25 +104,54 @@ int main(void)
 
   nRF24_Init(&hspi1);
   s = nRF24_GetStatus();
+  nRF24_FlushTX();
+  nRF24_FlushRX();
+  nRF24_DisableAA(0);
+  nRF24_SetRole(nRF24_ROLE_PTX);
+  nRF24_SetRFChannel(115);
+  nRF24_SetAddr(nRF24_PIPETX, tx_addr);
+  //nRF24_SetAddr(nRF24_PIPE0, pipe0);
+  nRF24_SetDatarate(nRF24_DR_250kbps);
+  nRF24_SetCRC(nRF24_CRC_Disabled);
+  nRF24_SetPowerMode(nRF24_MODE_PWR_UP);
+  //nRF24_SetPayloadSize(5);
+  nRF24_WriteRegister(nRF24_REG_RX_PW_P0, 5);
+  //nRF24_ReadMBRegister(nRF24_REG_TX_ADDR, buffer, 5);
+  //nRF24_ReadMBRegister(nRF24_REG_TX_ADDR, buffer, 5);
   __NOP;
-  nRF24_SetRFChannel(10);
-  s = nRF24_ReadRegister(nRF24_REG_RF_CH);
-  __NOP;
-  nRF24_ReadMBRegister(nRF24_REG_TX_ADDR, buffer, 5);
-  __NOP;
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  n = '0';
   while (1)
   {
     /* USER CODE END WHILE */
     /* USER CODE BEGIN 3 */
+	  strcpy(buffer, "Test");
+	  buffer[4] = n++;
+	  if (n>'9') n = '0';
+	  nRF24_WriteTXPayload(buffer, 5);
 
+	  nRF24_CE_HIGH;
+	  count = 10;
+	  do {
+		  s = nRF24_GetStatus();
+		  __NOP;
+		  if ((s & (1<<5)) || (s & (1<<5)))
+			  break;
+	  } while(--count);
+	  __NOP;
+	  nRF24_WriteRegister(nRF24_REG_STATUS, 0b01110000);
+	  nRF24_CE_LOW;
+	  /*
+	  s = nRF24_ReadRegister(nRF24_REG_OBSERVE_TX);
+	  s = nRF24_ReadRegister(nRF24_REG_CONFIG);
+	  s = nRF24_GetStatus();
+	  s = nRF24_GetStatus();
+	  */
 	  HAL_GPIO_TogglePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin);
 	  HAL_Delay(500);
-
   }
   /* USER CODE END 3 */
 }
