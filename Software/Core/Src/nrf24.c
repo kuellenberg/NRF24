@@ -103,7 +103,6 @@ void nRF24_SetRole(uint8_t role)
 	reg = nRF24_ReadRegister(nRF24_REG_CONFIG);
 	reg &= ~nRF24_CONFIG_PRIM_RX;
 	reg |= nRF24_CONFIG_PRIM_RX & role;
-	__NOP;
 	nRF24_WriteRegister(nRF24_REG_CONFIG, reg);
 }
 
@@ -114,7 +113,6 @@ void nRF24_SetPowerMode(uint8_t mode)
 	reg = nRF24_ReadRegister(nRF24_REG_CONFIG);
 	reg &= ~nRF24_CONFIG_PWR_UP;
 	reg |= nRF24_CONFIG_PWR_UP & mode;
-	__NOP;
 	nRF24_WriteRegister(nRF24_REG_CONFIG, reg);
 }
 
@@ -173,7 +171,26 @@ void nRF24_SetAddr(uint8_t pipe, uint8_t *addr)
 		aw = 1;
 	}
 	nRF24_WriteMBRegister(pipe, addr, aw);
+}
 
+void nRF24_SetARD(uint8_t ard)
+{
+	uint8_t reg;
+
+	reg = nRF24_ReadRegister(nRF24_REG_SETUP_RETR);
+	reg &= ~nRF24_MASK_ARD;
+	reg |= nRF24_MASK_ARD & ard;
+	nRF24_WriteRegister(nRF24_REG_SETUP_RETR, reg);
+}
+
+void nRF24_SetARC(uint8_t arc)
+{
+	uint8_t reg;
+
+	reg = nRF24_ReadRegister(nRF24_REG_SETUP_RETR);
+	reg &= ~nRF24_MASK_ARC;
+	reg |= nRF24_MASK_ARC & arc;
+	nRF24_WriteRegister(nRF24_REG_SETUP_RETR, reg);
 }
 
 void nRF24_FlushTX(void)

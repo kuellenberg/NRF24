@@ -51,14 +51,22 @@
 #define nRF24_REG_RX_PW_P5		0x16	// Number of bytes in RX payload in data pipe 5
 #define nRF24_REG_FIFO_STATUS	0x17	// FIFO status register
 #define nRF24_REG_DYNPD			0x1C	// Enable dynamic payload length
+#define nRF24_REG_FEATURE		0x1D
 
 #define nRF24_MASK_REG_MAP		0x1F	// Mask lower 5 bits for R_REGISTER and W_REGISTER
 #define nRF24_MASK_RF_PWR		0x06
 #define nRF24_MASK_DATARATE		0x28
 #define nRF24_MASK_CRC			0x0C
+#define nRF24_MASK_ARD			0xF0
+#define nRF24_MASK_ARC			0X0F
 
 #define nRF24_CONFIG_PRIM_RX	0x01
 #define nRF24_CONFIG_PWR_UP		0x02
+
+#define nRF24_STATUS_RX_DR		0x40
+#define nRF24_STATUS_TX_DS		0x20
+#define nRF24_STATUS_MAX_RT		0x10
+#define nRF24_STATUS_TX_FULL	0x01
 
 
 #define nRF24_CSN_LOW		HAL_GPIO_WritePin(NRF_CSN_GPIO_Port, NRF_CSN_Pin, GPIO_PIN_RESET)
@@ -106,6 +114,24 @@ enum {
 	nRF24_PIPETX	= nRF24_REG_TX_ADDR
 };
 
+enum {
+	nRF24_ARD_250	= 0x00,
+	nRF24_ARD_500	= 0x10,
+	nRF24_ARD_750	= 0x20,
+	nRF24_ARD_1000	= 0x30,
+	nRF24_ARD_1250	= 0x40,
+	nRF24_ARD_1500	= 0x50,
+	nRF24_ARD_1750	= 0x60,
+	nRF24_ARD_2000	= 0x70,
+	nRF24_ARD_2250	= 0x80,
+	nRF24_ARD_2500	= 0x90,
+	nRF24_ARD_2750	= 0xA0,
+	nRF24_ARD_3000	= 0xB0,
+	nRF24_ARD_3250	= 0xC0,
+	nRF24_ARD_3500	= 0xD0,
+	nRF24_ARD_3750	= 0xE0,
+	nRF24_ARD_4000	= 0xF0
+};
 
 static SPI_HandleTypeDef *nrf24_hspi;
 

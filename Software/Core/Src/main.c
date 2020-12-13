@@ -19,11 +19,10 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "nrf24.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "nrf24.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,6 +44,8 @@ ADC_HandleTypeDef hadc;
 
 I2C_HandleTypeDef hi2c1;
 
+RTC_HandleTypeDef hrtc;
+
 SPI_HandleTypeDef hspi1;
 
 /* USER CODE BEGIN PV */
@@ -57,6 +58,7 @@ static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_ADC_Init(void);
 static void MX_SPI1_Init(void);
+static void MX_RTC_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -73,10 +75,11 @@ static void MX_SPI1_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	uint8_t s,count,n;
-	uint8_t buffer[10] = {0,0,0,0,0,0,0,0,0,0};
+	uint8_t s,n;
+	uint8_t count;
+ 	uint8_t buffer[10] = {0,0,0,0,0,0,0,0,0,0};
 	uint8_t tx_addr[5] = {"1Node"};
-	uint8_t pipe0[5] = {"edoN1"};
+	uint8_t pipe0[5] = {"2Node"};
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -100,25 +103,30 @@ int main(void)
   MX_I2C1_Init();
   MX_ADC_Init();
   MX_SPI1_Init();
+  MX_RTC_Init();
   /* USER CODE BEGIN 2 */
+
+  HAL_GPIO_WritePin(BAT_CHECK_GPIO_Port, BAT_CHECK_Pin, GPIO_PIN_SET);
 
   nRF24_Init(&hspi1);
   s = nRF24_GetStatus();
   nRF24_FlushTX();
   nRF24_FlushRX();
-  nRF24_DisableAA(0);
+  //nRF24_DisableAA(0);
   nRF24_SetRole(nRF24_ROLE_PTX);
   nRF24_SetRFChannel(115);
   nRF24_SetAddr(nRF24_PIPETX, tx_addr);
-  //nRF24_SetAddr(nRF24_PIPE0, pipe0);
-  nRF24_SetDatarate(nRF24_DR_250kbps);
+  nRF24_SetAddr(nRF24_PIPE0, pipe0);
+  nRF24_SetDatarate(nRF24_DR_1Mbps);
   nRF24_SetCRC(nRF24_CRC_Disabled);
   nRF24_SetPowerMode(nRF24_MODE_PWR_UP);
-  //nRF24_SetPayloadSize(5);
-  nRF24_WriteRegister(nRF24_REG_RX_PW_P0, 5);
-  //nRF24_ReadMBRegister(nRF24_REG_TX_ADDR, buffer, 5);
-  //nRF24_ReadMBRegister(nRF24_REG_TX_ADDR, buffer, 5);
-  __NOP;
+  nRF24_SetARD(nRF24_ARD_1000);
+  nRF24_SetARC(5);
+
+
+
+
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -127,31 +135,32 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+
     /* USER CODE BEGIN 3 */
+
 	  strcpy(buffer, "Test");
 	  buffer[4] = n++;
 	  if (n>'9') n = '0';
 	  nRF24_WriteTXPayload(buffer, 5);
-
 	  nRF24_CE_HIGH;
 	  count = 10;
 	  do {
 		  s = nRF24_GetStatus();
-		  __NOP;
-		  if ((s & (1<<5)) || (s & (1<<5)))
+		  if (s & nRF24_STATUS_TX_DS) {
+			  s = s;
+			  s = s;
 			  break;
+		  }
 	  } while(--count);
-	  __NOP;
-	  nRF24_WriteRegister(nRF24_REG_STATUS, 0b01110000);
+	  //nRF24_WriteRegister(nRF24_REG_STATUS, 0b01110000);
 	  nRF24_CE_LOW;
-	  /*
+	  s = nRF24_GetStatus();
+	  s = s;
 	  s = nRF24_ReadRegister(nRF24_REG_OBSERVE_TX);
-	  s = nRF24_ReadRegister(nRF24_REG_CONFIG);
-	  s = nRF24_GetStatus();
-	  s = nRF24_GetStatus();
-	  */
-	  HAL_GPIO_TogglePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin);
+	  s = s;
+
 	  HAL_Delay(500);
+	  HAL_GPIO_TogglePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin);
   }
   /* USER CODE END 3 */
 }
@@ -172,7 +181,8 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_MSI;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_MSI;
+  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.MSIState = RCC_MSI_ON;
   RCC_OscInitStruct.MSICalibrationValue = 0;
   RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_5;
@@ -194,8 +204,9 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_I2C1;
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_I2C1|RCC_PERIPHCLK_RTC;
   PeriphClkInit.I2c1ClockSelection = RCC_I2C1CLKSOURCE_PCLK1;
+  PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
@@ -299,6 +310,75 @@ static void MX_I2C1_Init(void)
   /* USER CODE BEGIN I2C1_Init 2 */
 
   /* USER CODE END I2C1_Init 2 */
+
+}
+
+/**
+  * @brief RTC Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_RTC_Init(void)
+{
+
+  /* USER CODE BEGIN RTC_Init 0 */
+
+  /* USER CODE END RTC_Init 0 */
+
+  RTC_TimeTypeDef sTime = {0};
+  RTC_DateTypeDef sDate = {0};
+
+  /* USER CODE BEGIN RTC_Init 1 */
+
+  /* USER CODE END RTC_Init 1 */
+  /** Initialize RTC Only
+  */
+  hrtc.Instance = RTC;
+  hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
+  hrtc.Init.AsynchPrediv = 127;
+  hrtc.Init.SynchPrediv = 255;
+  hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
+  hrtc.Init.OutPutRemap = RTC_OUTPUT_REMAP_NONE;
+  hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
+  hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
+  if (HAL_RTC_Init(&hrtc) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /* USER CODE BEGIN Check_RTC_BKUP */
+
+  /* USER CODE END Check_RTC_BKUP */
+
+  /** Initialize RTC and set the Time and Date
+  */
+  sTime.Hours = 0x0;
+  sTime.Minutes = 0x0;
+  sTime.Seconds = 0x0;
+  sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+  sTime.StoreOperation = RTC_STOREOPERATION_RESET;
+  if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BCD) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sDate.WeekDay = RTC_WEEKDAY_MONDAY;
+  sDate.Month = RTC_MONTH_JANUARY;
+  sDate.Date = 0x1;
+  sDate.Year = 0x0;
+
+  if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BCD) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /** Enable the WakeUp
+  */
+  if (HAL_RTCEx_SetWakeUpTimer(&hrtc, 0, RTC_WAKEUPCLOCK_RTCCLK_DIV16) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN RTC_Init 2 */
+
+  /* USER CODE END RTC_Init 2 */
 
 }
 
